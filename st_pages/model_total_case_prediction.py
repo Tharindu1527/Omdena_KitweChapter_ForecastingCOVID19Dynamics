@@ -69,5 +69,6 @@ def total_case_prediction_page(mod):
             # st.write(input_df)
             prediction = model.predict(preprocessed_data)
             mod.success(f"Predicted Total Imputed Cases: {prediction[0]: .3f}")
+            st.toast(f"Predicted Total Imputed Cases: {prediction[0]: .3f}", icon="💡")
         except Exception as e:
             mod.error(f"An error occurred: {e}")
