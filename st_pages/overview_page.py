@@ -1,8 +1,8 @@
+import humanize
 import warnings
 import pandas as pd
 import streamlit as st
 import plotly.express as px
-
 warnings.filterwarnings('ignore')
 
 def plot1(df):
@@ -51,16 +51,16 @@ def main(overview):
     total_vaccinations = df['totalVaccinations'].sum()
     total_tests = df['totalTests'].sum()
 
-    formatted_total_cases = f"{total_cases / 1e3:.1f} K"
+    formatted_total_cases = f"{total_cases / 1e6:.1f} M"
     formatted_total_deaths = f"{total_deaths / 1e3:.1f} K"
     formatted_total_vaccinations = f"{total_vaccinations / 1e6:.1f} M"
     formatted_total_tests = f"{total_tests / 1e6:.1f} M"
 
     a1, a2, a3, a4, input_area, dl_csv = overview.columns([1,1,1,1,2,1.5])
-    a1.metric("Total Cases", formatted_total_cases)
-    a2.metric("Total Deaths", formatted_total_deaths)
-    a3.metric("Total Vaccinations", formatted_total_vaccinations)
-    a4.metric("Total Tests", formatted_total_tests)
+    a1.metric("Total Cases", formatted_total_cases, help=humanize.intcomma(int(total_cases)))
+    a2.metric(":red[Total Deaths]", formatted_total_deaths, help=humanize.intcomma(int(total_deaths)))
+    a3.metric(":green[Total Vaccinations]", formatted_total_vaccinations, help=humanize.intcomma(int(total_vaccinations)))
+    a4.metric(":blue[Total Tests]", formatted_total_tests, help=humanize.intcomma(int(total_tests)))
 
     try:
         date_range = input_area.date_input(
@@ -83,7 +83,7 @@ def main(overview):
         if df.empty:
             overview.toast("No data found for the selected date range.")
         else:
-            overview.dataframe(df, height=200)
+            overview.dataframe(df, height=180)
             
         cols = overview.columns(3)
         

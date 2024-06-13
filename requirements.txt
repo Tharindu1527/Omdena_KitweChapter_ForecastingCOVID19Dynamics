@@ -8,3 +8,4 @@ matplotlib
 pandas
 plotly
 streamlit-lottie
+humanize

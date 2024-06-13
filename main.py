@@ -6,6 +6,19 @@ from st_pages.overview_page import main as overview_page
 from st_pages.team_page import main as team_page
 
 st.set_page_config(page_title='COVID-19 Case Prediction App', page_icon='assets/img/favicon.png', layout='wide')
+st.write("""
+<style>
+div[data-testid="stMetric"]
+{
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px 0 0 10px;
+    border-radius: 5px;
+    border-color: #26282e !important;
+}
+</style>
+         
+""", unsafe_allow_html=True)
 
 home, overview, eda, model, team = st.tabs(['Home', 'Overview', 'EDA', 'Model', 'Team'])
 
