@@ -43,30 +43,45 @@ def plot3(df):
 overview = None
 
 def main(overview):
-    df = pd.read_csv("assets/data/preprocessed_data_updated.csv")
     overview.write("<h3>📊 Overview Of COVID-19 Data</h3>", unsafe_allow_html=True)
-
-    total_cases = df['imputed_total_cases'].sum()
-    total_deaths = df['imputed_total_deaths'].sum()
-    total_vaccinations = df['totalVaccinations'].sum()
-    total_tests = df['totalTests'].sum()
-
-    formatted_total_cases = f"{total_cases / 1e6:.1f} M"
-    formatted_total_deaths = f"{total_deaths / 1e3:.1f} K"
-    formatted_total_vaccinations = f"{total_vaccinations / 1e6:.1f} M"
-    formatted_total_tests = f"{total_tests / 1e6:.1f} M"
-
-    a1, a2, a3, a4, input_area, dl_csv = overview.columns([1,1,1,1,2,1.5])
-    a1.metric("Total Cases", formatted_total_cases, help=humanize.intcomma(int(total_cases)))
-    a2.metric(":red[Total Deaths]", formatted_total_deaths, help=humanize.intcomma(int(total_deaths)))
-    a3.metric(":green[Total Vaccinations]", formatted_total_vaccinations, help=humanize.intcomma(int(total_vaccinations)))
-    a4.metric(":blue[Total Tests]", formatted_total_tests, help=humanize.intcomma(int(total_tests)))
+    a1, a2, a3, a4, a5, input_area, dl_csv = overview.columns([1,1,1,1,1,2,1.5])
 
     try:
+        df = pd.read_csv("./assets/data/preprocessed_data_updated.csv")
+        df["date"] = df['Unnamed: 0']
+        df["date"] = pd.to_datetime(df["date"])
+        
         date_range = input_area.date_input(
             "Select Date Range",
             [pd.to_datetime(df["Unnamed: 0"]).min(), pd.to_datetime(df["Unnamed: 0"]).max()]
         )
+        
+        if len(date_range) == 2:
+            start_date, end_date = date_range
+            start_date = pd.to_datetime(start_date)
+            end_date = pd.to_datetime(end_date)
+            filtered_df = df[(df["date"] >= start_date) & (df["date"] <= end_date)]
+        else:
+            filtered_df = df
+
+        total_cases = filtered_df['imputed_total_cases'].max()
+        total_deaths = filtered_df['imputed_total_deaths'].max()
+        total_vaccinations = filtered_df['totalVaccinations'].max()
+        total_tests = filtered_df['totalTests'].max()
+        total_recoveries = filtered_df['imputed_total_recoveries'].max()
+
+        formatted_total_cases = f"{total_cases / 1e6:.1f} M"
+        formatted_total_deaths = f"{total_deaths / 1e3:.1f} K"
+        formatted_total_vaccinations = f"{total_vaccinations / 1e6:.1f} M"
+        formatted_total_tests = f"{total_tests / 1e6:.1f} M"
+        formatted_total_recoveries = f"{total_recoveries / 1e3:.1f} K"
+
+        a1.metric("Total Cases", formatted_total_cases, help=humanize.intcomma(int(total_cases)))
+        a2.metric(":red[Total Deaths]", formatted_total_deaths, help=humanize.intcomma(int(total_deaths)))
+        a3.metric(":green[Total Vaccinations]", formatted_total_vaccinations, help=humanize.intcomma(int(total_vaccinations)))
+        a4.metric(":blue[Total Tests]", formatted_total_tests, help=humanize.intcomma(int(total_tests)))
+        a5.metric(":orange[Total Recoveries]", formatted_total_recoveries, help=humanize.intcomma(int(total_recoveries)))
+        
         csv = df.to_csv(index=False).encode('utf-8')
         dl_csv.write("<br>"*1, unsafe_allow_html=True)
         dl_csv.download_button("Download Data", data=csv, file_name="covid_data.csv", mime="text/csv", use_container_width=True)
