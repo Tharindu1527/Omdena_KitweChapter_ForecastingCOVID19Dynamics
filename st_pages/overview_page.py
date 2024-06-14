@@ -66,21 +66,21 @@ def main(overview):
 
         total_cases = filtered_df['imputed_total_cases'].max()
         total_deaths = filtered_df['imputed_total_deaths'].max()
-        total_vaccinations = filtered_df['totalVaccinations'].max()
         total_tests = filtered_df['totalTests'].max()
+        total_vaccinations = filtered_df['totalVaccinations'].max()
         total_recoveries = filtered_df['imputed_total_recoveries'].max()
 
         formatted_total_cases = f"{total_cases / 1e6:.1f} M"
         formatted_total_deaths = f"{total_deaths / 1e3:.1f} K"
-        formatted_total_vaccinations = f"{total_vaccinations / 1e6:.1f} M"
         formatted_total_tests = f"{total_tests / 1e6:.1f} M"
+        formatted_total_vaccinations = f"{total_vaccinations / 1e6:.1f} M"
         formatted_total_recoveries = f"{total_recoveries / 1e3:.1f} K"
 
         a1.metric("Total Cases", formatted_total_cases, help=humanize.intcomma(int(total_cases)))
         a2.metric(":red[Total Deaths]", formatted_total_deaths, help=humanize.intcomma(int(total_deaths)))
-        a3.metric(":green[Total Vaccinations]", formatted_total_vaccinations, help=humanize.intcomma(int(total_vaccinations)))
-        a4.metric(":blue[Total Tests]", formatted_total_tests, help=humanize.intcomma(int(total_tests)))
-        a5.metric(":orange[Total Recoveries]", formatted_total_recoveries, help=humanize.intcomma(int(total_recoveries)))
+        a3.metric(":blue[Total Tests]", formatted_total_tests, help=humanize.intcomma(int(total_tests)))
+        a4.metric(":green[Total Vaccinations]", formatted_total_vaccinations, help=humanize.intcomma(int(total_vaccinations)))
+        a5.metric(":green[Total Recoveries]", formatted_total_recoveries, help=humanize.intcomma(int(total_recoveries)))
         
         csv = df.to_csv(index=False).encode('utf-8')
         dl_csv.write("<br>"*1, unsafe_allow_html=True)
